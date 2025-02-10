@@ -8,6 +8,7 @@ import Gestion from '/src/views/Gestion.vue';
 import Historique from '/src/views/HistoriqueMatchs.vue';
 import Home from '/src/views/Home.vue';
 import Inscription from '/src/views/Inscription.vue';
+import Match from '/src/views/MatchStats.vue';
 import Profil from '/src/views/Profil.vue';
 
 const routes = [
@@ -60,6 +61,11 @@ const routes = [
                 path: 'historique',
                 name: 'Historique',
                 component: Historique
+            },
+            {
+                path: 'match',
+                name: 'Match',
+                component: Match
             }
 
 

@@ -27,6 +27,8 @@
             <p v-else class="text-white text-sm">Aucun match trouvé.</p>
         </div>
     </div>
+    <img src="/src/assets/annuler.png" alt="Retour"
+        class="fixed bottom-16 left-4 w-8 h-8 filter invert cursor-pointer hover:scale-110 transition-transform duration-300 z-50">
 </template>
 
 <script>

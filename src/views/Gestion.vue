@@ -90,9 +90,9 @@
             </div>
         </div>
     </div>
-    <!-- Bouton retour en bas à gauche, au-dessus de la navbar -->
+
     <img src="/src/assets/annuler.png" alt="Retour"
-        class="fixed bottom-16 left-4 w-10 h-10 filter invert cursor-pointer hover:scale-110 transition-transform duration-300 z-50">
+        class="fixed bottom-16 left-4 w-8 h-8 filter invert cursor-pointer hover:scale-110 transition-transform duration-300 z-50">
 
 </template>
 
