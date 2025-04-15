@@ -1,74 +1,38 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import DefaultLayout from '/src/layouts/DefaultLayout.vue';
-import RegisteredLayout from '/src/layouts/RegisteredLayout.vue';
 import Club from '/src/views/Club.vue';
 import Compte from '/src/views/Compte.vue';
 import Connexion from '/src/views/Connexion.vue';
+import Matchdirect from '/src/views/GameSheet.vue';
 import Gestion from '/src/views/Gestion.vue';
 import Historique from '/src/views/HistoriqueMatchs.vue';
 import Home from '/src/views/Home.vue';
 import Inscription from '/src/views/Inscription.vue';
-import Match from '/src/views/MatchStats.vue';
+import Matchstats from '/src/views/MatchStats.vue';
 import Profil from '/src/views/Profil.vue';
+
 
 const routes = [
     {
         path: '/',
+        name: 'Home',
+        component: Home
+    },
+
+
+    {
+        path: '/',
         component: DefaultLayout,
         children: [
-            {
-                path: '',
-                name: 'Home',
-                component: Home
-            },
-            {
-                path: 'connexion',
-                name: 'Connexion',
-                component: Connexion
-            },
-            {
-                path: 'inscription',
-                name: 'Inscription',
-                component: Inscription
-            }
-        ]
-    },
-    {
-        path: '',
-        component: RegisteredLayout,
-        children: [
-            {
-                path: 'profil',
-                name: 'Profil',
-                component: Profil
-            },
-            {
-                path: 'compte',
-                name: 'Compte',
-                component: Compte
-            },
-            {
-                path: 'club',
-                name: 'Club',
-                component: Club
-            },
-            {
-                path: 'gestion',
-                name: 'Gestion',
-                component: Gestion
-            },
-            {
-                path: 'historique',
-                name: 'Historique',
-                component: Historique
-            },
-            {
-                path: 'match',
-                name: 'Match',
-                component: Match
-            }
-
-
+            { path: 'connexion', name: 'Connexion', component: Connexion },
+            { path: 'profil', name: 'Profil', component: Profil },
+            { path: 'club', name: 'Club', component: Club },
+            { path: 'inscription', name: 'Inscription', component: Inscription },
+            { path: 'historique', name: 'Historique', component: Historique },
+            { path: 'matchstats', name: 'Matchstats', component: Matchstats },
+            { path: 'gestion', name: 'Gestion', component: Gestion },
+            { path: 'match', name: 'Matchdirect', component: Matchdirect },
+            { path: 'compte', name: 'Compte', component: Compte }
         ]
     }
 ];
@@ -77,5 +41,6 @@ const router = createRouter({
     history: createWebHistory(),
     routes
 });
+
 
 export default router;

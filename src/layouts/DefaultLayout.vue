@@ -1,16 +1,19 @@
 <template>
     <div>
-        <main>
-            <router-view /> <!-- Affiche le contenu des routes ici -->
-        </main>
-        <AppFooter /> <!-- Affiche le footer en dehors de router-view -->
+        <Header /> <!-- Affiche le Header sur toutes les pages -->
+        <router-view /> <!-- Affiche le contenu des pages ici -->
+        <AppFooter /> <!-- Affiche le Footer sur toutes les pages -->
     </div>
 </template>
 
 <script>
-import AppFooter from "../components/AppFooter.vue";
+import AppFooter from "@/components/AppFooter.vue";
+import Header from "@/components/Header.vue";
 
 export default {
-    components: { AppFooter },
+    components: {
+        Header,
+        AppFooter
+    }
 };
 </script>

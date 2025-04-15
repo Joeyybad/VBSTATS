@@ -6,7 +6,7 @@
                 class="w-1/2 sm:w-1/5 md:w-1/4 lg:w-1/3 mx-auto mb-6">
 
             <!-- Texte + formulaire -->
-            <div>
+            <div class="mb-8">
                 <p>L'application incontournable pour votre club de volley</p>
                 <h2 class="text-1xl font-semibold text-white mb-4 mt-5">Inscription</h2>
                 <form class="space-y-2">
@@ -27,8 +27,8 @@
                             class="w-full px-4 py-2 border border-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div class="text-center">
-                        <button type="submit" class="px-6 py-2 text-white rounded-md hover:bg-yellow-600">Se
-                            connecter</button>
+                        <button type="submit" class="px-6 py-2 text-white rounded-md hover:bg-yellow-600">
+                            S'inscrire</button>
                     </div>
                 </form>
             </div>
