@@ -5,7 +5,7 @@
             <p>L'application incontournable pour votre club de volley</p>
             <h2 class="text-1xl font-semibold text-white mb-4 mt-5">Inscription</h2>
 
-            <form @submit.prevent="handleSubmit(onSubmit)" class="space-y-4">
+            <form @submit.prevent="submitForm" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-white">Prénom</label>
                     <input v-model="firstname" type="text" class="input-style" />
@@ -34,7 +34,7 @@
                     <label class="block text-sm font-medium text-white">Confirmation du mot de passe</label>
                     <input v-model="passwordConf" type="password" class="input-style" />
                     <span v-if="passwordConfMeta.touched && passwordConfError" class="error-text">{{ passwordConfError
-                    }}</span>
+                        }}</span>
                 </div>
 
                 <div class="text-center">
@@ -48,9 +48,11 @@
 </template>
 
 <script setup>
-import { useField, useForm } from 'vee-validate'
-import * as yup from 'yup'
-
+import axios from 'axios';
+import { useField, useForm } from 'vee-validate';
+import { useRouter } from 'vue-router';
+import * as yup from 'yup';
+const router = useRouter();
 const schema = yup.object({
     firstname: yup.string().required('Le prénom est requis'),
     lastname: yup.string().required('Le nom est requis'),
@@ -72,9 +74,27 @@ const { value: email, errorMessage: emailError, meta: emailMeta } = useField('em
 const { value: password, errorMessage: passwordError, meta: passwordMeta } = useField('password')
 const { value: passwordConf, errorMessage: passwordConfError, meta: passwordConfMeta } = useField('passwordConf')
 
-const onSubmit = (values) => {
-    console.log('✅ Formulaire soumis avec :', values)
+const onSubmit = async (values) => {
+    try {
+        console.log("Valeurs envoyées :", values);
+        const response = await axios.post('http://localhost:8082/api/user/create', {
+            firstname: values.firstname,
+            lastname: values.lastname,
+            email: values.email,
+            password: values.password
+        });
+
+        console.log('Utilisateur inscrit :', response.data);
+        router.push('/connexion');
+    } catch (error) {
+        if (error.response) {
+            alert(`Erreur du serveur : ${error.response.data}`);
+        } else {
+            alert('Erreur réseau, impossible de joindre le serveur.');
+        }
+    }
 }
+const submitForm = handleSubmit(onSubmit); // ⚠️ Doit être après onSubmit et handleSubmit
 </script>
 
 <style scoped>
@@ -86,5 +106,6 @@ const onSubmit = (values) => {
 
 .error-text {
     @apply text-red-500 text-xs block mt-1;
+    display: block;
 }
 </style>
