@@ -1,4 +1,8 @@
 <template>
+    <div v-if="showSuccessMessage"
+        class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center mt-4">
+        Utilisateur inscrit avec succès
+    </div>
     <div class="flex justify-center items-center min-h-screen pb-40">
         <div class="text-center p-4 w-full max-w-md">
             <img src="@/assets/VBStats.png" alt="logo" class="w-1/2 sm:w-1/5 md:w-1/4 lg:w-1/3 mx-auto mb-6" />
@@ -38,7 +42,8 @@
                 </div>
 
                 <div class="text-center">
-                    <button type="submit" class="px-6 py-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-600">
+                    <button type="submit" :disabled="loading"
+                        class="px-6 py-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-600">
                         S'inscrire
                     </button>
                 </div>
@@ -50,16 +55,19 @@
 <script setup>
 import axios from 'axios';
 import { useField, useForm } from 'vee-validate';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import * as yup from 'yup';
 const router = useRouter();
+const showSuccessMessage = ref(false);
 const schema = yup.object({
-    firstname: yup.string().required('Le prénom est requis'),
-    lastname: yup.string().required('Le nom est requis'),
-    email: yup.string().email('Email invalide').required('Email requis'),
-    password: yup.string().min(6, 'Minimum 6 caractères').required('Mot de passe requis'),
+    firstname: yup.string().trim().required('Le prénom est requis'),
+    lastname: yup.string().trim().required('Le nom est requis'),
+    email: yup.string().trim().email('Email invalide').required('Email requis'),
+    password: yup.string().trim().min(6, 'Minimum 6 caractères').required('Mot de passe requis'),
     passwordConf: yup
         .string()
+        .trim()
         .oneOf([yup.ref('password')], 'Les mots de passe ne correspondent pas')
         .required('Confirmation requise'),
 })
@@ -84,8 +92,11 @@ const onSubmit = async (values) => {
             password: values.password
         });
 
-        console.log('Utilisateur inscrit :', response.data);
-        router.push('/connexion');
+        showSuccessMessage.value = true;
+
+        setTimeout(() => {
+            router.push('/connexion');
+        }, 2000);
     } catch (error) {
         if (error.response) {
             alert(`Erreur du serveur : ${error.response.data}`);
@@ -107,5 +118,6 @@ const submitForm = handleSubmit(onSubmit); // ⚠️ Doit être après onSubmit 
 .error-text {
     @apply text-red-500 text-xs block mt-1;
     display: block;
+    color: rgb(255, 191, 0);
 }
 </style>

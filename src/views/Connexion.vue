@@ -1,5 +1,10 @@
 <template>
+    <div v-if="showSuccessMessage"
+        class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center mt-4">
+        Utilisateur connecté
+    </div>
     <div class="flex justify-center items-center min-h-screen">
+
         <div class="text-center p-4 w-full max-w-md">
             <!-- Logo -->
             <img src="/Users/nkungajordan/Documents/VBSTATS/VBStatsVue/src/assets/VBStats.png" alt="logo"
@@ -23,7 +28,8 @@
                         <span v-if="passwordMeta.touched && passwordError" class="error-text">{{ passwordError }}</span>
                     </div>
                     <div class="text-center">
-                        <button type="submit" class="px-6 py-2 text-white rounded-md hover:bg-yellow-600">Se
+                        <button type="submit" :disabled="loading"
+                            class="px-6 py-2 text-white rounded-md hover:bg-yellow-600">Se
                             connecter</button>
                     </div>
                 </form>
@@ -32,17 +38,26 @@
     </div>
 </template>
 <script setup>
-import  axios from 'axios';
+import { useUserStore } from '@/stores/user';
+import axios from 'axios';
 import { useField, useForm } from 'vee-validate';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import * as yup from 'yup';
+const showSuccessMessage = ref(false);
 
 const router = useRouter();
 
 const schema = yup.object({
-    email: yup.string().email('Email invalide').required('Email requis'),
-    password: yup.string().min(4, 'Minimum 4 caractères').required('Mot de passe requis'),
-})
+    email: yup.string()
+        .trim()
+        .required('Email ou mot de passe invalide')
+        .email('Email ou mot de passe invalide'),
+    password: yup.string()
+        .trim()
+        .required('Email ou mot de passe invalide')
+        .min(6, 'Email ou mot de passe invalide'),
+});
 
 const { handleSubmit } = useForm({
     validationSchema: schema,
@@ -51,7 +66,7 @@ const { handleSubmit } = useForm({
 const { value: email, errorMessage: emailError, meta: emailMeta } = useField('email')
 const { value: password, errorMessage: passwordError, meta: passwordMeta } = useField('password')
 
-
+const userStore = useUserStore();
 
 const onSubmit = async (values) => {
     try {
@@ -61,7 +76,12 @@ const onSubmit = async (values) => {
         });
 
         console.log('Utilisateur connecté :', response.data);
-        router.push('/profil');
+        showSuccessMessage.value = true;
+        userStore.setUser(response.data.user);
+        setTimeout(() => {
+            router.push('/profil');
+        }, 2000);
+
     } catch (error) {
         if (error.response) {
             alert(`Erreur du serveur : ${error.response.data}`);
@@ -84,5 +104,6 @@ const submitForm = handleSubmit(onSubmit); // ⚠️ Doit être après onSubmit 
 
 .error-text {
     @apply text-red-500 text-xs block mt-1;
+    color: rgb(255, 191, 0);
 }
 </style>

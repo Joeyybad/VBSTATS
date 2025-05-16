@@ -1,5 +1,9 @@
 <template>
+
     <div class="flex justify-center items-center pt-24 pb-20">
+        <div class="absolute top-4 right-6 text-white">
+            Bonjour, <strong>{{ user?.firstname }}</strong>
+        </div>
         <!-- Ajout d'un fond pour vérifier l'affichage -->
         <div class="text-center p-6 w-full max-w-md">
             <h2 class="text-2xl font-semibold text-white mb-6">Profil</h2>
@@ -25,8 +29,8 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'Profil'
-};
+<script setup>
+
+
+
 </script>
