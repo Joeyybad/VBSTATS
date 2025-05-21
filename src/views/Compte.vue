@@ -18,7 +18,7 @@
                 {{ user?.lastname }}
             </h3>
             <router-link :to="{ name: 'EditProfil' }"
-                class="px-6 py-2 text-white rounded-md bg-yellow-600 hover:bg-green-700 transition duration-200">
+                class="px-6 py-2 text-white rounded-md bg-yellow-600 hover:bg-yellow-800 transition duration-200">
                 <button> Modifier</button>
 
             </router-link>
