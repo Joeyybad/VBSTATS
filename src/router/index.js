@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import EditProfil from '../views/EditProfil.vue';
 import DefaultLayout from '/src/layouts/DefaultLayout.vue';
 import Club from '/src/views/Club.vue';
 import Compte from '/src/views/Compte.vue';
@@ -10,7 +11,6 @@ import Home from '/src/views/Home.vue';
 import Inscription from '/src/views/Inscription.vue';
 import Matchstats from '/src/views/MatchStats.vue';
 import Profil from '/src/views/Profil.vue';
-
 
 const routes = [
     {
@@ -32,7 +32,8 @@ const routes = [
             { path: 'matchstats', name: 'Matchstats', component: Matchstats },
             { path: 'gestion', name: 'Gestion', component: Gestion },
             { path: 'match', name: 'Matchdirect', component: Matchdirect },
-            { path: 'compte', name: 'Compte', component: Compte }
+            { path: 'compte', name: 'Compte', component: Compte },
+            { path: 'editprofil', name: 'EditProfil', component: EditProfil }
         ]
     }
 ];

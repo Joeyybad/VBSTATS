@@ -1,6 +1,6 @@
 <template>
 
-    <div class="flex justify-center items-center pt-24 pb-20">
+    <div class="relative min-h-screen flex flex-col justify-center items-center">
         <div class="absolute top-4 right-6 text-white">
             Bonjour, <strong>{{ user?.firstname }}</strong>
         </div>
@@ -30,7 +30,10 @@
 </template>
 
 <script setup>
-
-
-
+import { useUserStore } from '@/stores/user';
+import { computed } from 'vue';
+const authStore = useUserStore();
+const user = computed(() => authStore.user);
+console.log(user)
 </script>
+<style></style>

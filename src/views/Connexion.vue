@@ -48,6 +48,7 @@ const showSuccessMessage = ref(false);
 
 const router = useRouter();
 
+// construction d'un schèma pour les input validations
 const schema = yup.object({
     email: yup.string()
         .trim()

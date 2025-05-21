@@ -1,47 +1,42 @@
 <template>
-    <div class="flex justify-center items-center min-h-screen">
+    <div class="min-h-screen flex flex-col items-center bg-[#302F2F] px-4 py-16">
+        <!-- Titre éloigné du haut -->
+        <h2 class="text-4xl font-bold text-white mb-12 mt-8">Compte</h2>
 
-        <div class="text-center p-6 w-full max-w-md">
-            <h2 class="text-center text-2xl font-semibold text-white"> Compte </h2>
+        <!-- Bloc infos avec fond gris transparent -->
+        <div class="text-center p-6 w-full max-w-md rounded-lg shadow-lg  border bg-opacity-60 backdrop-blur-sm">
             <!-- Email Section -->
-            <h3 class="text-1xl font-semibold text-white mb-2">
-                {{ email ? email : "Email" }}
+            <h3 class="text-lg font-semibold text-white mb-2">
+                {{ user?.email }}
             </h3>
-            <button @click="modifierEmail"
-                class="border border-white rounded-lg p-4 w-full max-w-[200px] mx-auto mb-6 text-white hover:bg-gray-700 transition">
-                Modifier
-            </button>
+            <!-- Prénom Section -->
+            <h3 class="text-lg font-semibold text-white mb-2">
+                {{ user?.firstname }}
+            </h3>
+            <!-- Nom Section -->
+            <h3 class="text-lg font-semibold text-white mb-6">
+                {{ user?.lastname }}
+            </h3>
+            <router-link :to="{ name: 'EditProfil' }"
+                class="px-6 py-2 text-white rounded-md bg-yellow-600 hover:bg-green-700 transition duration-200">
+                <button> Modifier</button>
 
-            <!-- Mot de passe Section -->
-            <h3 class="text-1xl font-semibold text-white mb-4">
-                {{ password ? "********" : "Mot de passe" }}
-            </h3>
-            <button @click="modifierPassword"
-                class="border border-white rounded-lg p-4 w-full max-w-[200px] mx-auto mb-6 text-white hover:bg-gray-700 transition">
-                Modifier
-            </button>
+            </router-link>
+
         </div>
+        <!-- Bouton retour en bas à gauche -->
+        <router-link :to="{ name: 'Profil' }"
+            class="fixed bottom-30 left-15 flex items-center space-x-2 text-white hover:text-yellow-400 transition">
+            <img src="/src/assets/undo.png" alt="Retour" class="w-6 h-6 filter invert" />
+            <span>Retour</span>
+        </router-link>
     </div>
 </template>
 
-<script>
-export default {
-    name: "Compte",
-    data() {
-        return {
-            email: "", // Mettre une valeur dynamique ici si besoin
-            password: "" // Mettre une valeur dynamique ici si besoin
-        };
-    },
-    methods: {
-        modifierEmail() {
-            console.log("Modifier l'email");
-            // Ajouter ici la logique pour modifier l'email
-        },
-        modifierPassword() {
-            console.log("Modifier le mot de passe");
-            // Ajouter ici la logique pour modifier le mot de passe
-        }
-    }
-};
+<script setup>
+import { useUserStore } from '@/stores/user';
+const authStore = useUserStore();
+const user = authStore.user;
 </script>
+
+<style></style>
