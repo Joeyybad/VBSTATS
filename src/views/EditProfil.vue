@@ -80,40 +80,10 @@ import * as yup from 'yup';
 
 const userStore = useUserStore();
 const router = useRouter();
-
-
-const schema = yup.object({
-    email: yup.string().trim().email('Email invalide').required('Email requis'),
-    firstname: yup.string().trim().required('Le prénom est requis'),
-    lastname: yup.string().trim().required('Le nom est requis'),
-    currentPassword: yup.string().required('Mot de passe actuel requis'),
-
-    // Validation conditionnelle si l'utilisateur veut changer son mot de passe
-    newPassword: yup.string().when('confirmPassword', {
-        is: (val) => val && val.length > 0,
-        then: (schema) => schema.min(6, 'Minimum 6 caractères').required('Mot de passe requis'),
-        otherwise: (schema) => schema.notRequired(),
-    }),
-    confirmPassword: yup.string().when('newPassword', {
-        is: (val) => val && val.length > 0,
-        then: (schema) =>
-            schema
-                .oneOf([yup.ref('newPassword')], 'Les mots de passe ne correspondent pas')
-                .required('Confirmation requise'),
-        otherwise: (schema) => schema.notRequired(),
-    }),
-});
-
-
-const { handleSubmit, errors } = useForm({
-    validationSchema: schema,
-    initialValues: form.value,
-});
-
-
-
 const showSuccessMessage = ref(false);
+const showNewPasswordFields = ref(false);
 
+//initialisation du formulaire
 const form = ref({
     email: userStore.user.email,
     firstname: userStore.user.firstname,
@@ -122,8 +92,34 @@ const form = ref({
     newPassword: '',
     confirmPassword: ''
 });
-const showNewPasswordFields = ref(false);
 
+//Schema de validation des champs du formulaire
+const schema = yup.object({
+    email: yup.string().trim().email('Email invalide').required('Email requis'),
+    firstname: yup.string().trim().required('Le prénom est requis'),
+    lastname: yup.string().trim().required('Le nom est requis'),
+    currentPassword: yup.string().required('Mot de passe actuel requis'),
+
+    newPassword: yup.string().when('confirmPassword', {
+        is: (val) => val && val.length > 0,
+        then: (schema) => schema.min(6, 'Minimum 6 caractères').required('Nouveau mot de passe requis'),
+        otherwise: (schema) => schema.notRequired(),
+    }),
+
+    confirmPassword: yup.string().oneOf(
+        [yup.ref('newPassword')],
+        'Les mots de passe ne correspondent pas'
+    ),
+});
+
+
+// On appelle useForm
+const { handleSubmit, errors } = useForm({
+    validationSchema: schema,
+    initialValues: form.value,
+});
+
+// fonction de soumission
 const onSubmit = handleSubmit(async () => {
     try {
         const updatedUserRequest = {
