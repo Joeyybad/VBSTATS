@@ -29,7 +29,7 @@
                     </div>
                     <div class="text-center">
                         <button type="submit" :disabled="loading"
-                            class="px-6 py-2 text-white rounded-md hover:bg-yellow-600">Se
+                            class="px-6 py-2 text-white rounded-md bg-yellow-600 hover:bg-yellow-800">Se
                             connecter</button>
                     </div>
                 </form>

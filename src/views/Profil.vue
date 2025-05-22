@@ -27,6 +27,12 @@
             </div>
         </div>
     </div>
+    <!-- Bouton retour en bas à gauche -->
+    <router-link :to="{ name: 'Home' }"
+        class="fixed bottom-30 left-15 flex items-center space-x-2 text-white hover:text-yellow-400 transition">
+        <img src="/src/assets/undo.png" alt="Retour" class="w-6 h-6 filter invert" />
+        <span>Retour</span>
+    </router-link>
 </template>
 
 <script setup>
