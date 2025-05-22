@@ -2,7 +2,7 @@
 
     <div class="relative min-h-screen flex flex-col justify-center items-center">
         <div class="absolute top-4 right-6 text-white">
-            Bonjour, <strong>{{ user?.firstname }}</strong>
+            Bonjour, <span class="text-yellow-400"><strong>{{ user?.firstname }}</strong></span>
         </div>
         <!-- Ajout d'un fond pour vérifier l'affichage -->
         <div class="text-center p-6 w-full max-w-md">
@@ -40,6 +40,5 @@ import { useUserStore } from '@/stores/user';
 import { computed } from 'vue';
 const authStore = useUserStore();
 const user = computed(() => authStore.user);
-console.log(user)
 </script>
 <style></style>
