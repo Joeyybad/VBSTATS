@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import ClubCreate from '../views/ClubCreate.vue';
 import EditProfil from '../views/EditProfil.vue';
 import DefaultLayout from '/src/layouts/DefaultLayout.vue';
 import Club from '/src/views/Club.vue';
@@ -33,7 +34,9 @@ const routes = [
             { path: 'gestion', name: 'Gestion', component: Gestion },
             { path: 'match', name: 'Matchdirect', component: Matchdirect },
             { path: 'compte', name: 'Compte', component: Compte },
-            { path: 'editprofil', name: 'EditProfil', component: EditProfil }
+            { path: 'editprofil', name: 'EditProfil', component: EditProfil },
+            { path: 'clubcreate', name: 'ClubCreate', component: ClubCreate }
+
         ]
     }
 ];

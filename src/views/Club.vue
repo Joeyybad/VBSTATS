@@ -19,8 +19,10 @@
             <div v-else>
                 <div class="flex items-center justify-center gap-2">
                     <h3 class="text-2xl font-semibold text-white">Ajouter un club</h3>
-                    <img @click="ajouterClub" src="/src/assets/plus.png" alt="Ajouter"
-                        class="w-6 h-6 cursor-pointer hover:scale-110 transition filter invert">
+                    <router-link :to="{ name: 'ClubCreate' }"><img @click="ajouterClub" src="/src/assets/plus.png"
+                            alt="Ajouter"
+                            class="w-6 h-6 cursor-pointer hover:scale-110 transition filter invert" /></router-link>
+
                 </div>
             </div>
         </div>

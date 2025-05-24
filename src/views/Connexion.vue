@@ -11,7 +11,7 @@
                 class="w-1/2 sm:w-1/5 md:w-1/4 lg:w-1/3 mx-auto mb-6">
 
             <!-- Texte + formulaire -->
-            <div>
+            <div class="pb-20">
                 <p>L'application incontournable pour votre club de volley</p>
                 <h2 class="text-1xl font-semibold text-white mb-4 mt-5">Connexion</h2>
                 <form @submit.prevent="submitForm" class="space-y-4">

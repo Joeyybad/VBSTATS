@@ -3,7 +3,7 @@
         class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center mt-4">
         Utilisateur modifié avec succès
     </div>
-    <div class="pt-24 pb-20 max-w-md mx-auto text-white">
+    <div class="pt-24 pb-40 max-w-md mx-auto text-white">
         <h2 class="text-2xl font-bold mb-6 text-center">Modifier mes informations</h2>
 
         <form @submit.prevent="onSubmit" class="space-y-4">

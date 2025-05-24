@@ -3,7 +3,15 @@ import { defineStore } from 'pinia';
 
 export const useUserStore = defineStore('user', {
     state: () => ({
-        user: JSON.parse(localStorage.getItem('user')) || null,
+        user: (() => {
+            try {
+                const stored = localStorage.getItem('user');
+                return stored ? JSON.parse(stored) : null;
+            } catch (e) {
+                console.error("Erreur lors du parsing du user depuis le localStorage :", e);
+                return null;
+            }
+        })(),
         token: localStorage.getItem('token') || null,
     }),
     actions: {
@@ -25,4 +33,3 @@ export const useUserStore = defineStore('user', {
         },
     },
 });
-
