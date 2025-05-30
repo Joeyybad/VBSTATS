@@ -4,14 +4,29 @@
             <h2 class="text-3xl font-bold text-white mb-6">Club</h2>
 
             <!-- Affichage du nom et du logo si un club existe -->
-            <div v-if="club">
-                <img :src="club.logo" alt="Logo du club" class="w-20 h-20 mx-auto mb-4 rounded-full">
+            <div v-if="loading">Chargement...</div>
+
+            <div v-else-if="club" class="border rounded border-yellow-600 ">
+                <img :src="`http://localhost:8082/api/uploads/logos/${club.clubImg}`" alt="Logo du club"
+                    class="w-28 h-28 mx-auto mb-4 rounded-none">
 
                 <!-- Nom du club avec icône Modifier -->
-                <div class="flex items-center justify-center gap-2">
-                    <h3 class="text-2xl font-semibold text-white">{{ club.nom }}</h3>
+                <div class="flex items-center justify-center gap-2 ">
+                    <h3 class="text-2xl font-semibold text-white">{{ club.name }}</h3>
                     <img @click="modifierClub" src="/src/assets/edition.png" alt="Modifier"
                         class="w-6 h-6 cursor-pointer hover:scale-110 transition filter invert">
+                </div>
+                <div>
+                    <p class="text-xl p-3">
+                        {{ club.description }}
+                    </p>
+
+                </div>
+                <div>
+                    <p class="text-xl p-3">
+                        {{ club.location }}
+                    </p>
+
                 </div>
             </div>
 
@@ -36,24 +51,31 @@
 
 </template>
 
-<script>
-export default {
-    name: "Compte",
-    data() {
-        return {
-            club: null // Si null => pas de club, sinon { nom: 'Nom du Club', logo: 'url_du_logo' }
-        };
-    },
-    methods: {
-        ajouterClub() {
-            console.log("Ajout d'un club...");
-            // Logique pour ajouter un club
-            this.club = { nom: "Mon Club", logo: "/src/assets/mon-club-logo.png" };
-        },
-        modifierClub() {
-            console.log("Modification du club...");
-            // Logique pour modifier un club
+<script setup>
+import { useUserStore } from '@/stores/user';
+import axios from 'axios';
+import { onMounted, ref } from 'vue';
+
+const userStore = useUserStore();
+const loading = ref(true);
+const club = ref(null);
+
+onMounted(async () => {
+    try {
+        const userId = userStore.user?.id;
+        if (!userId) {
+            console.error('Utilisateur non connecté');
+            loading.value = false;
+            return;
         }
+
+        const response = await axios.get(`http://localhost:8082/api/club/by-user/${userId}`);
+        club.value = response.data;
+        console.log(club.value);
+    } catch (error) {
+        console.error('Erreur lors de la récupération du club :', error);
+    } finally {
+        loading.value = false;
     }
-};
+});
 </script>
