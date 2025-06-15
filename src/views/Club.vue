@@ -6,15 +6,16 @@
             <!-- Affichage du nom et du logo si un club existe -->
             <div v-if="loading">Chargement...</div>
 
-            <div v-else-if="club" class="border rounded border-yellow-600 ">
+            <div v-else-if="club"
+                class="border rounded border-yellow-600 outline outline-2 outline-yellow-700 outline-offset-2 p-2">
                 <img :src="`http://localhost:8082/api/uploads/logos/${club.clubImg}`" alt="Logo du club"
-                    class="w-28 h-28 mx-auto mb-4 rounded-none">
+                    class="w-28 h-32 mx-auto mb-4 rounded-none">
 
                 <!-- Nom du club avec icône Modifier -->
                 <div class="flex items-center justify-center gap-2 ">
                     <h3 class="text-2xl font-semibold text-white">{{ club.name }}</h3>
-                    <img @click="modifierClub" src="/src/assets/edition.png" alt="Modifier"
-                        class="w-6 h-6 cursor-pointer hover:scale-110 transition filter invert">
+                    <router-link :to="{ name: 'EditClub' }"> <img src="/src/assets/edition.png" alt="Modifier club"
+                            class="w-6 h-6 cursor-pointer hover:scale-110 transition filter invert"></router-link>
                 </div>
                 <div>
                     <p class="text-xl p-3">

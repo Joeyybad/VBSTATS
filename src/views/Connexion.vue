@@ -78,7 +78,7 @@ const onSubmit = async (values) => {
 
         console.log('Utilisateur connecté :', response.data);
         showSuccessMessage.value = true;
-        userStore.setUser(response.data.user);
+        userStore.setUser(response.data.user, response.data.token);
         setTimeout(() => {
             router.push('/profil');
         }, 2000);

@@ -16,10 +16,11 @@ export const useUserStore = defineStore('user', {
     }),
     actions: {
         setUser(userData, token) {
+            if (!userData || !token) {
+                console.warn('setUser appelé sans user ou token !');
+            }
             this.user = userData;
             this.token = token;
-
-            // Persistance dans le localStorage
             localStorage.setItem('user', JSON.stringify(userData));
             localStorage.setItem('token', token);
         },
@@ -32,4 +33,5 @@ export const useUserStore = defineStore('user', {
             localStorage.removeItem('token');
         },
     },
+    persist: true,
 });
