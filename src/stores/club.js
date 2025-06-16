@@ -9,7 +9,7 @@ export const useClubStore = defineStore('club', {
     actions: {
         async fetchClubByUserId(userId, token) {
             try {
-                const response = await axios.get(`http://localhost:8082/api/club/by-user/${userId}`, {
+                const response = await axios.get(`http://localhost:8082/club/by-user/${userId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

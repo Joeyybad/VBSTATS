@@ -88,8 +88,7 @@ const previewUrl = ref(null);
 const currentPassword = ref('');
 const club = computed(() => clubStore.club);
 
-console.log("User Store token :", userStore.token);
-console.log("User Store user :", userStore.user);
+
 
 // Schéma de validation
 const schema = yup.object({
@@ -125,7 +124,7 @@ onMounted(async () => {
         cities.value = [location.value]; // Pour que le <select> ait une option affichée
     }
     if (clubStore.club.clubImg) {
-        previewUrl.value = `http://localhost:8082/api/uploads/logos/${clubStore.club.clubImg}`;
+        previewUrl.value = `http://localhost:8082/uploads/logos/${clubStore.club.clubImg}`;
     }
 });
 
@@ -167,12 +166,12 @@ const onSubmit = handleSubmit(async (values) => {
             formData.append('clubImg', file.value);
         }
 
-        await axios.put('http://localhost:8082/api/club/update', formData, {
+        await axios.put('http://localhost:8082/club/update', formData, {
             headers: {
                 Authorization: `Bearer ${userStore.token}`,
                 // Pas besoin de définir Content-Type manuellement pour FormData
             },
-        }, console.log('Token envoyé :', userStore.token));
+        });
 
         showSuccessMessage.value = true;
         setTimeout(() => {

@@ -132,7 +132,7 @@ const onSubmit = handleSubmit(async (values) => {
             currentPassword: values.currentPassword,
         };
 
-        await axios.put('http://localhost:8082/api/user/update', updatedUserRequest, {
+        await axios.put('http://localhost:8082/user/update', updatedUserRequest, {
             headers: {
                 Authorization: `Bearer ${userStore.token}`,
             },

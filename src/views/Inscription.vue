@@ -38,7 +38,7 @@
                     <label class="block text-sm font-medium text-white">Confirmation du mot de passe</label>
                     <input v-model="passwordConf" type="password" class="input-style" />
                     <span v-if="passwordConfMeta.touched && passwordConfError" class="error-text">{{ passwordConfError
-                        }}</span>
+                    }}</span>
                 </div>
 
                 <div class="text-center">
@@ -85,7 +85,7 @@ const { value: passwordConf, errorMessage: passwordConfError, meta: passwordConf
 const onSubmit = async (values) => {
     try {
         console.log("Valeurs envoyées :", values);
-        const response = await axios.post('http://localhost:8082/api/user/create', {
+        const response = await axios.post('http://localhost:8082/user/create', {
             firstname: values.firstname,
             lastname: values.lastname,
             email: values.email,

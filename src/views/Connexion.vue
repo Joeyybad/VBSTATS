@@ -71,7 +71,7 @@ const userStore = useUserStore();
 
 const onSubmit = async (values) => {
     try {
-        const response = await axios.post('http://localhost:8082/api/user/login', {
+        const response = await axios.post('http://localhost:8082/user/login', {
             email: values.email,
             password: values.password
         });

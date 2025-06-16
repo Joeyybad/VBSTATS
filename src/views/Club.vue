@@ -8,7 +8,7 @@
 
             <div v-else-if="club"
                 class="border rounded border-yellow-600 outline outline-2 outline-yellow-700 outline-offset-2 p-2">
-                <img :src="`http://localhost:8082/api/uploads/logos/${club.clubImg}`" alt="Logo du club"
+                <img :src="`http://localhost:8082/uploads/logos/${club.clubImg}`" alt="Logo du club"
                     class="w-28 h-32 mx-auto mb-4 rounded-none">
 
                 <!-- Nom du club avec icône Modifier -->
@@ -70,7 +70,12 @@ onMounted(async () => {
             return;
         }
 
-        const response = await axios.get(`http://localhost:8082/api/club/by-user/${userId}`);
+        console.log(userId)
+        const response = await axios.get(`http://localhost:8082/club/by-user/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${userStore.token}`
+            }
+        });
         club.value = response.data;
         console.log(club.value);
     } catch (error) {
