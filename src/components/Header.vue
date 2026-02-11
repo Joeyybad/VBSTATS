@@ -1,38 +1,48 @@
 <template>
-    <header
-        :class="['fixed top-0 left-0 w-full text-white py-4 transition-opacity duration-300', isHidden ? 'opacity-0' : 'opacity-100']">
-        <div class="grid grid-cols-1 gap-x-4 md:gap-x-20">
-            <!-- Logo -->
-            <div class="flex justify-start items-center pl-4">
-                <router-link :to="{ name: 'Connexion' }">
-                    <img src="/src/assets/VBStats.png" alt="VBStatLogo"
-                        class="w-20 h-auto hover:scale-110 transition-transform duration-300 cursor-pointer">
-                </router-link>
-            </div>
-        </div>
-    </header>
+  <header
+    :class="[
+      'fixed top-0 left-0 w-full z-50 px-6 py-4 transition-all duration-300',
+      isHidden ? '-translate-y-full' : 'translate-y-0',
+      lastScrollY > 50 ? 'bg-gray-900/80 backdrop-blur-lg' : 'bg-transparent',
+    ]"
+  >
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <router-link
+        :to="{ name: 'Connexion' }"
+        class="hover:scale-105 transition-transform"
+      >
+        <img src="@/assets/VBStats.png" alt="Logo" class="w-12 h-auto" />
+      </router-link>
+
+      <div class="text-xs font-mono text-white/50 uppercase tracking-widest">
+        Live Stats
+      </div>
+    </div>
+  </header>
 </template>
 
-<script>
-export default {
-    data() {
-        return {
-            isHidden: false,
-            lastScrollY: 0
-        };
-    },
-    mounted() {
-        window.addEventListener("scroll", this.handleScroll);
-    },
-    beforeUnmount() {
-        window.removeEventListener("scroll", this.handleScroll);
-    },
-    methods: {
-        handleScroll() {
-            const currentScrollY = window.scrollY;
-            this.isHidden = currentScrollY > this.lastScrollY;
-            this.lastScrollY = currentScrollY;
-        }
-    }
+<script setup>
+import { ref, onMounted, onUnmounted } from "vue";
+
+// Variables réactives (on enlève les types TS)
+const isHidden = ref(false);
+const lastScrollY = ref(0);
+
+const handleScroll = () => {
+  const currentScrollY = window.scrollY;
+
+  // Cache si on descend, montre si on remonte
+  isHidden.value = currentScrollY > lastScrollY.value && currentScrollY > 50;
+
+  // Mise à jour de la position
+  lastScrollY.value = currentScrollY;
 };
+
+onMounted(() => {
+  window.addEventListener("scroll", handleScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("scroll", handleScroll);
+});
 </script>

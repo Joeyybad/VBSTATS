@@ -1,20 +1,26 @@
 <template>
+  <footer class="w-full py-1 px-6 border-t border-white/5 bg-transparent">
+    <div
+      class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4"
+    >
+      <div
+        class="flex items-center gap-3 opacity-50 hover:opacity-100 transition-opacity"
+      >
+        <img
+          src="@/assets/VBStats.png"
+          alt="logo"
+          class="w-8 h-auto grayscale"
+        />
+        <span class="text-sm font-light tracking-widest uppercase"
+          >VB Stats</span
+        >
+      </div>
 
-    <footer class="fixed bottom-0 left-0 w-full text-white pt-4">
-        <div class="p-4">
-            <div class="grid grid-cols-[100px_auto] items-center gap-4 sm:gap-100 md:gap-45 lg:gap-120">
-                <div class="w-30">
-                    <img src="@/assets/VBStats.png" alt="logo" class="w-15 h-auto">
-                </div>
-                <div>
-                    <p class="italic text-lg">VB Stats</p>
-                </div>
+      <div class="text-slate-500 text-[10px] uppercase tracking-[0.2em]">
+        &copy; {{ new Date().getFullYear() }} — Tous droits réservés
+      </div>
 
-            </div>
-
-        </div>
-    </footer>
-
-
-
+      <div class="hidden sm:block w-32"></div>
+    </div>
+  </footer>
 </template>

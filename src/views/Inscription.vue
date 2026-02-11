@@ -1,123 +1,163 @@
 <template>
-    <div v-if="showSuccessMessage"
-        class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center mt-4">
-        Utilisateur inscrit avec succès
-    </div>
-    <div class="flex justify-center items-center min-h-screen pb-40">
-        <div class="text-center p-4 w-full max-w-md">
-            <img src="@/assets/VBStats.png" alt="logo" class="w-1/2 sm:w-1/5 md:w-1/4 lg:w-1/3 mx-auto mb-6" />
-            <p>L'application incontournable pour votre club de volley</p>
-            <h2 class="text-1xl font-semibold text-white mb-4 mt-5">Inscription</h2>
+  <div
+    v-if="showSuccessMessage"
+    class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-green-100 border border-green-400 text-green-700 px-6 py-3 rounded-lg shadow-md"
+  >
+    Utilisateur inscrit avec succès ! Redirection...
+  </div>
 
-            <form @submit.prevent="submitForm" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-white">Prénom</label>
-                    <input v-model="firstname" type="text" class="input-style" />
-                    <span v-if="firstnameMeta.touched && firstnameError" class="error-text">{{ firstnameError }}</span>
-                </div>
+  <AuthLayout
+    title="Inscription"
+    subtitle="L'application incontournable pour votre club de volley"
+    buttonText="S'inscrire"
+    :loading="loading"
+    @submit="submitForm"
+  >
+    <template #fields>
+      <AuthInput
+        label="Prénom"
+        v-model="firstname"
+        :error="firstnameMeta.touched ? firstnameError : ''"
+        placeholder="Jean"
+      />
 
-                <div>
-                    <label class="block text-sm font-medium text-white">Nom</label>
-                    <input v-model="lastname" type="text" class="input-style" />
-                    <span v-if="lastnameMeta.touched && lastnameError" class="error-text">{{ lastnameError }}</span>
-                </div>
+      <AuthInput
+        label="Nom"
+        v-model="lastname"
+        :error="lastnameMeta.touched ? lastnameError : ''"
+        placeholder="Dupont"
+      />
 
-                <div>
-                    <label class="block text-sm font-medium text-white">Email</label>
-                    <input v-model="email" type="email" class="input-style" />
-                    <span v-if="emailMeta.touched && emailError" class="error-text">{{ emailError }}</span>
-                </div>
+      <AuthInput
+        label="Email"
+        v-model="email"
+        type="email"
+        :error="emailMeta.touched ? emailError : ''"
+        placeholder="exemple@volley.fr"
+      />
 
-                <div>
-                    <label class="block text-sm font-medium text-white">Mot de passe</label>
-                    <input v-model="password" type="password" class="input-style" />
-                    <span v-if="passwordMeta.touched && passwordError" class="error-text">{{ passwordError }}</span>
-                </div>
+      <AuthInput
+        label="Mot de passe"
+        v-model="password"
+        type="password"
+        :error="passwordMeta.touched ? passwordError : ''"
+        placeholder="******"
+      />
 
-                <div>
-                    <label class="block text-sm font-medium text-white">Confirmation du mot de passe</label>
-                    <input v-model="passwordConf" type="password" class="input-style" />
-                    <span v-if="passwordConfMeta.touched && passwordConfError" class="error-text">{{ passwordConfError
-                    }}</span>
-                </div>
+      <AuthInput
+        label="Confirmation du mot de passe"
+        v-model="confirmPassword"
+        type="password"
+        :error="confirmPasswordMeta.touched ? confirmPasswordError : ''"
+        placeholder="******"
+      />
+    </template>
 
-                <div class="text-center">
-                    <button type="submit" :disabled="loading"
-                        class="px-6 py-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-600">
-                        S'inscrire
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <template #footer>
+      Déjà un compte ?
+      <router-link
+        to="/connexion"
+        class="text-yellow-500 hover:underline font-semibold"
+      >
+        Connectez-vous
+      </router-link>
+    </template>
+  </AuthLayout>
 </template>
 
 <script setup>
-import axios from 'axios';
-import { useField, useForm } from 'vee-validate';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import * as yup from 'yup';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useField, useForm } from "vee-validate";
+import * as yup from "yup";
+import api from "@/config";
+
+// Import des nouveaux composants
+import AuthLayout from "@/layouts/AuthLayout.vue";
+import AuthInput from "@/components/AuthInput.vue";
+
 const router = useRouter();
 const showSuccessMessage = ref(false);
+const loading = ref(false);
+
+// 1. Schéma de validation Yup
 const schema = yup.object({
-    firstname: yup.string().trim().required('Le prénom est requis'),
-    lastname: yup.string().trim().required('Le nom est requis'),
-    email: yup.string().trim().email('Email invalide').required('Email requis'),
-    password: yup.string().trim().min(6, 'Minimum 6 caractères').required('Mot de passe requis'),
-    passwordConf: yup
-        .string()
-        .trim()
-        .oneOf([yup.ref('password')], 'Les mots de passe ne correspondent pas')
-        .required('Confirmation requise'),
-})
+  firstname: yup.string().trim().required("Le prénom est requis"),
+  lastname: yup.string().trim().required("Le nom est requis"),
+  email: yup.string().trim().email("Email invalide").required("Email requis"),
+  password: yup
+    .string()
+    .trim()
+    .min(6, "Minimum 6 caractères")
+    .required("Mot de passe requis"),
+  confirmPassword: yup
+    .string()
+    .trim()
+    .oneOf([yup.ref("password")], "Les mots de passe ne correspondent pas")
+    .required("Confirmation requise"),
+});
 
+// 2. Initialisation de Vee-Validate
 const { handleSubmit } = useForm({
-    validationSchema: schema,
-})
+  validationSchema: schema,
+});
 
-const { value: firstname, errorMessage: firstnameError, meta: firstnameMeta } = useField('firstname')
-const { value: lastname, errorMessage: lastnameError, meta: lastnameMeta } = useField('lastname')
-const { value: email, errorMessage: emailError, meta: emailMeta } = useField('email')
-const { value: password, errorMessage: passwordError, meta: passwordMeta } = useField('password')
-const { value: passwordConf, errorMessage: passwordConfError, meta: passwordConfMeta } = useField('passwordConf')
+const {
+  value: firstname,
+  errorMessage: firstnameError,
+  meta: firstnameMeta,
+} = useField("firstname");
+const {
+  value: lastname,
+  errorMessage: lastnameError,
+  meta: lastnameMeta,
+} = useField("lastname");
+const {
+  value: email,
+  errorMessage: emailError,
+  meta: emailMeta,
+} = useField("email");
+const {
+  value: password,
+  errorMessage: passwordError,
+  meta: passwordMeta,
+} = useField("password");
+const {
+  value: confirmPassword,
+  errorMessage: confirmPasswordError,
+  meta: confirmPasswordMeta,
+} = useField("confirmPassword");
 
+// 3. Logique de soumission
 const onSubmit = async (values) => {
-    try {
-        console.log("Valeurs envoyées :", values);
-        const response = await axios.post('http://localhost:8082/user/create', {
-            firstname: values.firstname,
-            lastname: values.lastname,
-            email: values.email,
-            password: values.password
-        });
+  loading.value = true;
+  try {
+    await api.post("/user/create", {
+      firstname: values.firstname,
+      lastname: values.lastname,
+      email: values.email,
+      password: values.password,
+      confirmPassword: values.confirmPassword,
+    });
 
-        showSuccessMessage.value = true;
+    showSuccessMessage.value = true;
 
-        setTimeout(() => {
-            router.push('/connexion');
-        }, 2000);
-    } catch (error) {
-        if (error.response) {
-            alert(`Erreur du serveur : ${error.response.data}`);
-        } else {
-            alert('Erreur réseau, impossible de joindre le serveur.');
-        }
-    }
-}
-const submitForm = handleSubmit(onSubmit); // ⚠️ Doit être après onSubmit et handleSubmit
+    setTimeout(() => {
+      router.push("/connexion");
+    }, 2000);
+  } catch (error) {
+    const message = error.response?.data || "Erreur lors de l'inscription";
+    alert(`Erreur : ${message}`);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const submitForm = handleSubmit(onSubmit);
 </script>
 
 <style scoped>
-.input-style {
-    border: 1px white solid;
-    border-radius: 7px;
-    @apply w-full px-4 py-2 border border-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500;
-}
-
-.error-text {
-    @apply text-red-500 text-xs block mt-1;
-    display: block;
-    color: rgb(255, 191, 0);
-}
+/* Plus besoin de .input-style ou .error-text ici ! 
+   Tout est géré à l'intérieur de AuthInput et AuthLayout.
+*/
 </style>
