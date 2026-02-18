@@ -1,0 +1,22 @@
+# Dépendances 
+node_modules
+npm-debug.log
+
+# Build local
+dist
+
+# Git
+.git
+.gitignore
+
+# OS & IDE
+.DS_Store
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+
+# Environnement
+.env
+.env.local
