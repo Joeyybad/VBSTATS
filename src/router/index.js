@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import ClubCreate from "../views/ClubCreate.vue";
 import EditClub from "../views/EditClub.vue";
-import EditProfil from "../views/EditProfil.vue";
+import EditCompte from "../views/EditCompte.vue";
 import DefaultLayout from "/src/layouts/DefaultLayout.vue";
 import Club from "/src/views/Club.vue";
 import Compte from "/src/views/Compte.vue";
@@ -16,11 +16,6 @@ import Profil from "/src/views/Profil.vue";
 
 const routes = [
   // Pages "publiques" ou "plein écran" (sans Header/Navbar/Footer par défaut)
-  {
-    path: "/",
-    name: "Home",
-    component: Home,
-  },
   {
     path: "/connexion",
     name: "Connexion",
@@ -37,6 +32,7 @@ const routes = [
     path: "/",
     component: DefaultLayout,
     children: [
+      { path: "", name: "Home", component: Home },
       { path: "profil", name: "Profil", component: Profil },
       { path: "club", name: "Club", component: Club },
       { path: "historique", name: "Historique", component: Historique },
@@ -44,7 +40,7 @@ const routes = [
       { path: "gestion", name: "Gestion", component: Gestion },
       { path: "match", name: "Matchdirect", component: Matchdirect },
       { path: "compte", name: "Compte", component: Compte },
-      { path: "editprofil", name: "EditProfil", component: EditProfil },
+      { path: "editcompte", name: "EditCompte", component: EditCompte },
       { path: "clubcreate", name: "ClubCreate", component: ClubCreate },
       { path: "editclub", name: "EditClub", component: EditClub },
     ],

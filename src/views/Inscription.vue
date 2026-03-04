@@ -1,32 +1,34 @@
 <template>
-  <div
-    v-if="showSuccessMessage"
-    class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-green-100 border border-green-400 text-green-700 px-6 py-3 rounded-lg shadow-md"
-  >
-    Utilisateur inscrit avec succès ! Redirection...
-  </div>
+  <BaseNotification
+    :show="notification.show"
+    :title="notification.title"
+    :message="notification.message"
+    :type="notification.type"
+    @close="notification.show = false"
+  />
 
   <AuthLayout
     title="Inscription"
-    subtitle="L'application incontournable pour votre club de volley"
-    buttonText="S'inscrire"
+    subtitle="Rejoignez la communauté VB Stats et digitalisez votre club"
+    buttonText="Créer mon compte"
     :loading="loading"
     @submit="submitForm"
   >
     <template #fields>
-      <AuthInput
-        label="Prénom"
-        v-model="firstname"
-        :error="firstnameMeta.touched ? firstnameError : ''"
-        placeholder="Jean"
-      />
-
-      <AuthInput
-        label="Nom"
-        v-model="lastname"
-        :error="lastnameMeta.touched ? lastnameError : ''"
-        placeholder="Dupont"
-      />
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <AuthInput
+          label="Prénom"
+          v-model="firstname"
+          :error="firstnameMeta.touched ? firstnameError : ''"
+          placeholder="Jean"
+        />
+        <AuthInput
+          label="Nom"
+          v-model="lastname"
+          :error="lastnameMeta.touched ? lastnameError : ''"
+          placeholder="Dupont"
+        />
+      </div>
 
       <AuthInput
         label="Email"
@@ -54,13 +56,15 @@
     </template>
 
     <template #footer>
-      Déjà un compte ?
-      <router-link
-        to="/connexion"
-        class="text-yellow-500 hover:underline font-semibold"
-      >
-        Connectez-vous
-      </router-link>
+      <div class="text-slate-400">
+        Déjà un compte ?
+        <router-link
+          to="/connexion"
+          class="text-yellow-500 hover:text-yellow-400 font-semibold transition-colors underline-offset-4 hover:underline"
+        >
+          Connectez-vous ici
+        </router-link>
+      </div>
     </template>
   </AuthLayout>
 </template>
@@ -72,35 +76,52 @@ import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import api from "@/config";
 
-// Import des nouveaux composants
+// Imports des composants
 import AuthLayout from "@/layouts/AuthLayout.vue";
 import AuthInput from "@/components/AuthInput.vue";
+import BaseNotification from "@/components/BaseNotification.vue";
 
 const router = useRouter();
-const showSuccessMessage = ref(false);
 const loading = ref(false);
+
+// Système de notification
+const notification = ref({
+  show: false,
+  title: "",
+  message: "",
+  type: "success",
+});
+
+const triggerNotify = (title, message, type = "success") => {
+  notification.value = { show: true, title, message, type };
+  setTimeout(() => {
+    notification.value.show = false;
+  }, 4000);
+};
 
 // 1. Schéma de validation Yup
 const schema = yup.object({
   firstname: yup.string().trim().required("Le prénom est requis"),
   lastname: yup.string().trim().required("Le nom est requis"),
-  email: yup.string().trim().email("Email invalide").required("Email requis"),
+  email: yup
+    .string()
+    .trim()
+    .email("Email invalide")
+    .required("L'email est requis"),
   password: yup
     .string()
     .trim()
     .min(6, "Minimum 6 caractères")
-    .required("Mot de passe requis"),
+    .required("Le mot de passe est requis"),
   confirmPassword: yup
     .string()
     .trim()
     .oneOf([yup.ref("password")], "Les mots de passe ne correspondent pas")
-    .required("Confirmation requise"),
+    .required("Veuillez confirmer le mot de passe"),
 });
 
 // 2. Initialisation de Vee-Validate
-const { handleSubmit } = useForm({
-  validationSchema: schema,
-});
+const { handleSubmit } = useForm({ validationSchema: schema });
 
 const {
   value: firstname,
@@ -140,14 +161,19 @@ const onSubmit = async (values) => {
       confirmPassword: values.confirmPassword,
     });
 
-    showSuccessMessage.value = true;
+    triggerNotify(
+      "Inscription réussie !",
+      "Votre compte a été créé. Vous allez être redirigé vers la connexion.",
+      "success",
+    );
 
     setTimeout(() => {
       router.push("/connexion");
-    }, 2000);
+    }, 2500);
   } catch (error) {
-    const message = error.response?.data || "Erreur lors de l'inscription";
-    alert(`Erreur : ${message}`);
+    const errorMsg =
+      error.response?.data || "Une erreur est survenue lors de l'inscription.";
+    triggerNotify("Échec de l'inscription", errorMsg, "error");
   } finally {
     loading.value = false;
   }
@@ -155,9 +181,3 @@ const onSubmit = async (values) => {
 
 const submitForm = handleSubmit(onSubmit);
 </script>
-
-<style scoped>
-/* Plus besoin de .input-style ou .error-text ici ! 
-   Tout est géré à l'intérieur de AuthInput et AuthLayout.
-*/
-</style>

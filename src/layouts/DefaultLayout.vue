@@ -2,28 +2,23 @@
   <div class="flex flex-col min-h-screen bg-slate-900 text-white">
     <Header />
 
-    <main class="flex-1 pt-24 px-4 w-full max-w-lg mx-auto">
-      <slot />
+    <main class="flex-1 pt-24 px-4 w-full max-w-7xl mx-auto">
+      <router-view />
     </main>
 
-    <AppFooter />
+    <AppFooter class="hidden md:block" />
 
-    <Navbar />
+    <Navbar class="z-[999]" />
 
-    <div class="h-32 w-full pr-ev-footer-gap"></div>
+    <div class="h-24 md:hidden"></div>
   </div>
 </template>
 
-<script>
-import AppFooter from "@/components/AppFooter.vue";
+<script setup>
 import Header from "@/components/Header.vue";
+import AppFooter from "@/components/AppFooter.vue";
 import Navbar from "@/components/Navbar.vue";
+import { useUserStore } from "@/stores/user";
 
-export default {
-  components: {
-    Header,
-    AppFooter,
-    Navbar,
-  },
-};
+const userStore = useUserStore();
 </script>

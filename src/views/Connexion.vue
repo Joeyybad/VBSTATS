@@ -1,96 +1,87 @@
 <template>
-  <div
-    v-if="showSuccessMessage"
-    class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded text-center mt-4"
+  <BaseNotification
+    :show="notification.show"
+    :title="notification.title"
+    :message="notification.message"
+    :type="notification.type"
+    @close="notification.show = false"
+  />
+
+  <AuthLayout
+    title="Connexion"
+    subtitle="Accédez à votre tableau de bord VB Stats"
+    buttonText="Se connecter"
+    :loading="loading"
+    @submit="submitForm"
   >
-    Utilisateur connecté
-  </div>
-  <div class="flex justify-center items-center min-h-screen">
-    <div class="text-center p-4 w-full max-w-md">
-      <!-- Logo -->
-      <img
-        src="../assets/VBStats.png"
-        alt="logo"
-        class="w-1/2 sm:w-1/5 md:w-1/4 lg:w-1/3 mx-auto mb-6"
+    <template #fields>
+      <AuthInput
+        label="Email utilisateur"
+        v-slot:default
+        v-model="email"
+        type="email"
+        :error="emailMeta.touched ? emailError : ''"
+        placeholder="votre@email.com"
       />
 
-      <!-- Texte + formulaire -->
-      <div class="pb-20">
-        <p>L'application incontournable pour votre club de volley</p>
-        <h2 class="text-1xl font-semibold text-white mb-4 mt-5">Connexion</h2>
-        <form @submit.prevent="submitForm" class="space-y-4">
-          <div>
-            <label for="email" class="block text-sm font-medium text-white"
-              >Email utilisateur</label
-            >
-            <input
-              v-model="email"
-              type="text"
-              id="email"
-              name="email"
-              class="w-full px-4 py-2 border border-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <span v-if="emailMeta.touched && emailError" class="error-text">{{
-              emailError
-            }}</span>
-          </div>
-          <div>
-            <label for="password" class="block text-sm font-medium text-white"
-              >Mot de passe</label
-            >
-            <input
-              v-model="password"
-              type="password"
-              id="password"
-              name="password"
-              class="w-full px-4 py-2 border border-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <span
-              v-if="passwordMeta.touched && passwordError"
-              class="error-text"
-              >{{ passwordError }}</span
-            >
-          </div>
-          <div class="text-center">
-            <button
-              type="submit"
-              :disabled="loading"
-              class="px-6 py-2 text-white rounded-md bg-yellow-600 hover:bg-yellow-800"
-            >
-              Se connecter
-            </button>
-          </div>
-        </form>
+      <AuthInput
+        label="Mot de passe"
+        v-model="password"
+        type="password"
+        :error="passwordMeta.touched ? passwordError : ''"
+        placeholder="••••••"
+      />
+    </template>
+
+    <template #footer>
+      <div class="text-slate-400">
+        Pas encore de compte ?
+        <router-link
+          to="/inscription"
+          class="text-yellow-500 hover:text-yellow-400 font-semibold transition-colors underline-offset-4 hover:underline"
+        >
+          Inscrivez-vous gratuitement
+        </router-link>
       </div>
-    </div>
-  </div>
+    </template>
+  </AuthLayout>
 </template>
+
 <script setup>
-import { useUserStore } from "@/stores/user";
-import axios from "axios";
-import { useField, useForm } from "vee-validate";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
-const showSuccessMessage = ref(false);
+import { useUserStore } from "@/stores/user";
 import api from "@/config";
 
-const router = useRouter();
+// Import des composants
+import AuthLayout from "@/layouts/AuthLayout.vue";
+import AuthInput from "@/components/AuthInput.vue";
+import BaseNotification from "@/components/BaseNotification.vue";
 
-// construction d'un schèma pour les input validations
+const router = useRouter();
+const userStore = useUserStore();
+
+// États de l'interface
+const showNotify = ref(false);
+const loading = ref(false);
+
+// 1. Schéma de validation Yup
 const schema = yup.object({
   email: yup
     .string()
     .trim()
-    .required("Email ou mot de passe invalide")
-    .email("Email ou mot de passe invalide"),
+    .email("Format d'email invalide")
+    .required("L'email est requis"),
   password: yup
     .string()
     .trim()
-    .required("Email ou mot de passe invalide")
-    .min(6, "Email ou mot de passe invalide"),
+    .min(6, "Le mot de passe doit faire au moins 6 caractères")
+    .required("Le mot de passe est requis"),
 });
 
+// 2. Initialisation Vee-Validate
 const { handleSubmit } = useForm({
   validationSchema: schema,
 });
@@ -106,42 +97,48 @@ const {
   meta: passwordMeta,
 } = useField("password");
 
-const userStore = useUserStore();
+const notification = ref({
+  show: false,
+  title: "",
+  message: "",
+  type: "success",
+});
 
+const triggerNotify = (title, message, type = "success") => {
+  notification.value = { show: true, title, message, type };
+  setTimeout(() => {
+    notification.value.show = false;
+  }, 3000);
+};
+
+// 3. Logique de connexion
 const onSubmit = async (values) => {
+  loading.value = true;
   try {
     const response = await api.post("/user/login", {
       email: values.email,
       password: values.password,
     });
 
-    console.log("Utilisateur connecté :", response.data);
-    showSuccessMessage.value = true;
+    // Stockage dans Pinia
     userStore.setUser(response.data.user, response.data.token);
+
+    // Notification Succès dynamique
+    triggerNotify("Connexion réussie", "Content de vous revoir !", "success");
+
+    // Redirection après un court délai pour laisser le temps de voir le succès
     setTimeout(() => {
-      router.push("/profil");
-    }, 2000);
+      router.push("/");
+    }, 1500);
   } catch (error) {
-    if (error.response) {
-      alert(`Erreur du serveur : ${error.response.data}`);
-    } else {
-      alert("Erreur réseau, impossible de joindre le serveur.");
-    }
+    // Erreur dynamique (on récupère le message du back-end s'il existe)
+    const errorMsg = error.response?.data || "Email ou mot de passe incorrect.";
+    // Notification Erreur dynamique
+    triggerNotify("Erreur de connexion", errorMsg, "error");
+  } finally {
+    loading.value = false;
   }
 };
 
-const submitForm = handleSubmit(onSubmit); // ⚠️ Doit être après onSubmit et handleSubmit
+const submitForm = handleSubmit(onSubmit);
 </script>
-
-<style scoped>
-.input-style {
-  border: 1px white solid;
-  border-radius: 7px;
-  @apply w-full px-4 py-2 border border-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500;
-}
-
-.error-text {
-  @apply text-red-500 text-xs block mt-1;
-  color: rgb(255, 191, 0);
-}
-</style>
