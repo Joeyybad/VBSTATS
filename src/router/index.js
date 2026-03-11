@@ -6,7 +6,7 @@ import DefaultLayout from "/src/layouts/DefaultLayout.vue";
 import Club from "/src/views/Club.vue";
 import Compte from "/src/views/Compte.vue";
 import Connexion from "/src/views/Connexion.vue";
-import Matchdirect from "/src/views/GameSheet.vue";
+import Gamesheet from "/src/views/GameSheet.vue";
 import Gestion from "/src/views/Gestion.vue";
 import Historique from "/src/views/HistoriqueMatchs.vue";
 import Home from "/src/views/Home.vue";
@@ -38,7 +38,7 @@ const routes = [
       { path: "historique", name: "Historique", component: Historique },
       { path: "matchstats", name: "Matchstats", component: Matchstats },
       { path: "gestion", name: "Gestion", component: Gestion },
-      { path: "match", name: "Matchdirect", component: Matchdirect },
+      { path: "match/:clubId", name: "Gamesheet", component: Gamesheet },
       { path: "compte", name: "Compte", component: Compte },
       { path: "editcompte", name: "EditCompte", component: EditCompte },
       { path: "clubcreate", name: "ClubCreate", component: ClubCreate },

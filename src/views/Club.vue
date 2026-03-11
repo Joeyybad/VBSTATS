@@ -1,10 +1,65 @@
 <template>
+  <BaseNotification
+    :show="notification.show"
+    :title="notification.title"
+    :message="notification.message"
+    :type="notification.type"
+    @close="notification.show = false"
+  />
+
+  <BaseModal
+    :show="showConfirmModal"
+    title="Supprimer le joueur ?"
+    type="danger"
+    @close="showConfirmModal = false"
+  >
+    <template #icon>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="32"
+        height="32"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M3 6h18" />
+        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+        <line x1="10" x2="10" y1="11" y2="17" />
+        <line x1="14" x2="14" y1="11" y2="17" />
+      </svg>
+    </template>
+
+    <template #message>
+      Cette action est irréversible. Le joueur sera définitivement retiré de
+      l'effectif de l'ASCA.
+    </template>
+
+    <template #actions>
+      <button
+        @click="showConfirmModal = false"
+        class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition-colors"
+      >
+        Annuler
+      </button>
+      <button
+        @click="executeDelete"
+        class="flex-1 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-colors shadow-lg shadow-red-500/20"
+      >
+        Supprimer
+      </button>
+    </template>
+  </BaseModal>
+
   <div class="max-w-2xl mx-auto w-full py-8 space-y-8">
     <div class="flex flex-col gap-1 border-b border-white/10 pb-6">
-      <h1 class="text-3xl font-bold tracking-tight text-white">Mon Club</h1>
-      <p class="text-slate-400">
-        Consultez les informations officielles de votre équipe.
-      </p>
+      <h1 class="text-3xl font-bold tracking-tight text-white italic">
+        Mon Club
+      </h1>
+      <p class="text-slate-400">Identité et effectif de votre équipe.</p>
     </div>
 
     <div
@@ -17,7 +72,7 @@
       <p class="text-slate-500 animate-pulse">Recherche de votre club...</p>
     </div>
 
-    <div v-else-if="club" class="space-y-6">
+    <div v-else-if="club" class="space-y-8">
       <div
         class="bg-slate-800/40 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-sm shadow-xl"
       >
@@ -35,13 +90,18 @@
                 alt="Logo"
                 class="w-full h-full object-cover"
               />
-              <div v-else class="text-slate-600">Logo</div>
+              <div
+                v-else
+                class="text-slate-600 font-bold uppercase tracking-widest text-xs"
+              >
+                No Logo
+              </div>
             </div>
           </div>
-
           <h2 class="text-3xl font-bold text-white mb-2">{{ club.name }}</h2>
-
-          <div class="flex items-center gap-2 text-yellow-500 font-medium mb-6">
+          <div
+            class="flex items-center gap-2 text-yellow-500 font-medium mb-6 italic"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18"
@@ -58,67 +118,221 @@
             </svg>
             {{ club.location }}
           </div>
-
           <p class="text-slate-300 leading-relaxed max-w-md italic">
             "{{ club.description }}"
           </p>
         </div>
-
-        <div class="bg-white/5 p-4 flex justify-between items-center px-8">
+        <div
+          class="bg-white/5 p-4 flex justify-between items-center px-8 border-t border-white/5"
+        >
           <span
             class="text-xs text-slate-500 uppercase tracking-widest font-semibold"
-            >Identifiant Club: #{{ club.id }}</span
+            >Club ID: #{{ club.id }}</span
           >
           <router-link
             :to="{ name: 'EditClub' }"
-            class="inline-flex items-center gap-2 px-5 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm font-bold rounded-xl transition-all active:scale-95"
+            class="inline-flex items-center gap-2 px-5 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm font-bold rounded-xl transition-all"
           >
             <img src="/src/assets/edition.png" class="w-4 h-4 filter invert" />
-            Modifier le club
+            Editer
           </router-link>
         </div>
       </div>
-    </div>
 
-    <div v-else>
-      <router-link
-        :to="{ name: 'ClubCreate' }"
-        class="group relative block w-full border-2 border-dashed border-white/10 rounded-3xl p-12 text-center hover:border-yellow-500/50 hover:bg-yellow-500/5 transition-all duration-300"
+      <div
+        class="bg-slate-800/40 border border-white/10 rounded-3xl backdrop-blur-sm shadow-xl overflow-hidden"
       >
-        <div
-          class="mx-auto w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300"
-        >
-          <img
-            src="/src/assets/plus.png"
-            alt="Ajouter"
-            class="w-8 h-8 filter invert opacity-50 group-hover:opacity-100"
-          />
-        </div>
-        <h3 class="text-xl font-bold text-white mb-1">Aucun club enregistré</h3>
-        <p class="text-slate-500 max-w-xs mx-auto text-sm leading-relaxed">
-          Vous n'avez pas encore de club rattaché à votre compte. Créez-en un
-          pour commencer à gérer vos joueurs.
-        </p>
-        <div
-          class="mt-6 inline-flex items-center font-bold text-yellow-500 group-hover:translate-x-1 transition-transform"
-        >
-          Créer un club maintenant →
-        </div>
-      </router-link>
-    </div>
+        <div class="p-8 space-y-8">
+          <h3 class="text-xl font-bold text-white flex items-center gap-3">
+            <div class="p-2 bg-yellow-500/10 rounded-lg text-yellow-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            </div>
+            Effectif de l'équipe
+          </h3>
 
-    <div class="pt-4">
-      <button
-        @click="$router.push({ name: 'Profil' })"
-        class="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors group"
-      >
-        <img
-          src="/src/assets/undo.png"
-          alt="Retour"
-          class="w-4 h-4 filter invert opacity-50 group-hover:opacity-100"
-        />
-        Retour au menu Profil
-      </button>
+          <form
+            @submit.prevent="addPlayer"
+            class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white/5 p-6 rounded-2xl border border-white/5"
+          >
+            <AuthInput
+              label="Prénom"
+              v-model="playerForm.firstname"
+              placeholder="Jean"
+            />
+            <AuthInput
+              label="Nom"
+              v-model="playerForm.lastname"
+              placeholder="Dupont"
+            />
+            <AuthInput
+              label="N° Maillot"
+              v-model="playerForm.jerseyNumber"
+              type="number"
+              placeholder="10"
+            />
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-slate-300"
+                >Poste</label
+              >
+              <select
+                v-model="playerForm.position"
+                class="w-full bg-slate-900/50 border border-white/10 rounded-xl px-4 py-3 text-white outline-none cursor-pointer focus:ring-2 focus:ring-yellow-500/50 transition-all appearance-none"
+              >
+                <option value="PASSEUR">Passeur</option>
+                <option value="RÉCEP-ATTAQUANT">Récep-Attaquant</option>
+                <option value="CENTRAL">Central</option>
+                <option value="POINTU">Pointu</option>
+                <option value="LIBERO">Libero</option>
+              </select>
+            </div>
+            <div class="sm:col-span-2 pt-2">
+              <button
+                type="submit"
+                :disabled="savingPlayer"
+                class="w-full py-3 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 text-slate-900 font-bold rounded-xl transition-all shadow-lg shadow-yellow-500/10"
+              >
+                {{ savingPlayer ? "Recrutement..." : "Ajouter le joueur" }}
+              </button>
+            </div>
+          </form>
+
+          <div class="space-y-4">
+            <h4
+              class="text-sm font-semibold text-slate-500 uppercase tracking-widest"
+            >
+              Joueurs ({{ players.length }})
+            </h4>
+
+            <div
+              v-if="players.length === 0"
+              class="text-center py-8 border-2 border-dashed border-white/5 rounded-2xl text-slate-500 text-sm italic"
+            >
+              Aucun joueur enregistré.
+            </div>
+
+            <div v-else class="grid gap-3">
+              <div
+                v-for="player in players"
+                :key="player.id"
+                class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:border-yellow-500/30 transition-all group"
+              >
+                <div class="flex items-center gap-4">
+                  <div
+                    class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center font-bold text-yellow-500 border border-yellow-500/20"
+                  >
+                    {{ player.jerseyNumber }}
+                  </div>
+                  <div>
+                    <p class="text-white font-bold">
+                      {{ player.firstname }} {{ player.lastname }}
+                    </p>
+                    <p
+                      class="text-[10px] uppercase tracking-wider text-slate-500 font-bold"
+                    >
+                      {{ player.position }}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  @click="confirmDelete(player.id)"
+                  class="p-2 text-slate-600 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M3 6h18" />
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                    <line x1="10" x2="10" y1="11" y2="17" />
+                    <line x1="14" x2="14" y1="11" y2="17" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div
+              v-if="players.length >= 6"
+              class="mt-8 p-6 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in zoom-in duration-500"
+            >
+              <div class="flex items-center gap-4">
+                <div
+                  class="p-3 bg-yellow-500 rounded-xl shadow-lg shadow-yellow-500/20"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="black"
+                    stroke-width="2.5"
+                  >
+                    <path
+                      d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
+                    />
+                    <polyline points="14 2 14 8 20 8" />
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="text-white font-bold text-lg">
+                    Effectif complet !
+                  </h4>
+                  <p class="text-slate-400 text-sm">
+                    Prêt pour la feuille de match.
+                  </p>
+                </div>
+              </div>
+              <button
+                @click="
+                  $router.push({
+                    name: 'Gamesheet',
+                    params: { clubId: club.id },
+                  })
+                "
+                class="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-black rounded-xl transition-all shadow-xl shadow-yellow-500/10 flex items-center gap-2"
+              >
+                Feuille de match →
+              </button>
+            </div>
+
+            <div
+              v-else-if="players.length > 0"
+              class="mt-6 p-4 bg-white/5 border border-white/5 rounded-xl text-center"
+            >
+              <p class="text-slate-500 text-sm italic">
+                Il vous manque encore
+                <span class="text-yellow-500 font-bold">{{
+                  6 - players.length
+                }}</span>
+                joueur(s) pour lancer un match.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -127,24 +341,118 @@
 import { useUserStore } from "@/stores/user";
 import api from "@/config";
 import { onMounted, ref } from "vue";
+import AuthInput from "@/components/AuthInput.vue";
+import BaseNotification from "@/components/BaseNotification.vue";
+import BaseModal from "@/components/BaseModal.vue";
 
+// ÉTATS
 const userStore = useUserStore();
 const loading = ref(true);
 const club = ref(null);
+const players = ref([]);
+const savingPlayer = ref(false);
+
+// ÉTATS MODALES & NOTIFS
+const showConfirmModal = ref(false);
+const playerToDeleteId = ref(null);
+const notification = ref({
+  show: false,
+  title: "",
+  message: "",
+  type: "success",
+});
+
+const playerForm = ref({
+  firstname: "",
+  lastname: "",
+  jerseyNumber: "",
+  position: "PASSEUR",
+});
+
+// ACTIONS
+const triggerNotify = (title, message, type = "success") => {
+  notification.value = { show: true, title, message, type };
+  setTimeout(() => {
+    notification.value.show = false;
+  }, 3000);
+};
+
+const fetchPlayers = async (clubId) => {
+  try {
+    const response = await api.get(`/players/club/${clubId}`);
+    players.value = response.data;
+  } catch (error) {
+    console.error("Erreur joueurs:", error);
+  }
+};
+
+const addPlayer = async () => {
+  if (!playerForm.value.firstname || !playerForm.value.lastname) {
+    triggerNotify(
+      "Champs requis",
+      "Le nom et le prénom sont obligatoires.",
+      "error",
+    );
+    return;
+  }
+  savingPlayer.value = true;
+  try {
+    const response = await api.post(
+      `/players/add/${club.value.id}`,
+      playerForm.value,
+    );
+    players.value.push(response.data);
+    playerForm.value = {
+      firstname: "",
+      lastname: "",
+      jerseyNumber: "",
+      position: "PASSEUR",
+    };
+    triggerNotify(
+      "Recrutement réussi",
+      "Le joueur a rejoint le club !",
+      "success",
+    );
+  } catch (error) {
+    triggerNotify("Erreur", "Impossible d'ajouter le joueur.", "error");
+  } finally {
+    savingPlayer.value = false;
+  }
+};
+
+const confirmDelete = (id) => {
+  playerToDeleteId.value = id;
+  showConfirmModal.value = true;
+};
+
+const executeDelete = async () => {
+  if (!playerToDeleteId.value) return;
+  try {
+    await api.delete(`/players/${playerToDeleteId.value}`);
+    players.value = players.value.filter(
+      (p) => p.id !== playerToDeleteId.value,
+    );
+    showConfirmModal.value = false;
+    triggerNotify("Joueur supprimé", "L'effectif a été mis à jour.", "success");
+  } catch (error) {
+    triggerNotify(
+      "Erreur",
+      "Le serveur n'a pas pu supprimer le joueur.",
+      "error",
+    );
+  } finally {
+    playerToDeleteId.value = null;
+  }
+};
 
 onMounted(async () => {
   try {
     const userId = userStore.user?.id;
-    if (!userId) {
-      loading.value = false;
-      return;
-    }
-
+    if (!userId) return;
     const response = await api.get(`/club/by-user/${userId}`);
-    // On vérifie si response.data contient bien un club (pas vide)
     club.value = response.data && response.data.id ? response.data : null;
+    if (club.value) await fetchPlayers(club.value.id);
   } catch (error) {
-    console.error("Erreur lors de la récupération du club :", error);
     club.value = null;
   } finally {
     loading.value = false;
