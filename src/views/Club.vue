@@ -334,6 +334,53 @@
         </div>
       </div>
     </div>
+    <div
+      v-else
+      class="text-center py-20 bg-slate-800/40 border border-dashed border-white/10 rounded-3xl backdrop-blur-sm"
+    >
+      <div
+        class="inline-flex items-center justify-center w-16 h-16 bg-yellow-500/10 rounded-full mb-6"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#eab308"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-2">Aucun club trouvé</h2>
+      <p class="text-slate-400 mb-8 max-w-sm mx-auto">
+        Vous n'avez pas encore de club rattaché à votre compte. Créez votre
+        identité sportive pour commencer à gérer vos joueurs.
+      </p>
+      <button
+        @click="$router.push({ name: 'ClubCreate' })"
+        class="px-8 py-3 bg-yellow-500 cursor-pointer hover:bg-yellow-600 text-slate-900 font-black rounded-xl transition-all shadow-lg shadow-yellow-500/20"
+      >
+        Créer mon club
+      </button>
+    </div>
+    <div class="pt-4">
+      <button
+        @click="$router.push({ name: 'Profil' })"
+        class="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors group"
+      >
+        <img
+          src="/src/assets/undo.png"
+          alt="Retour"
+          class="w-4 h-4 filter invert opacity-50 group-hover:opacity-100"
+        />
+        Retour au menu Profil
+      </button>
+    </div>
   </div>
 </template>
 
