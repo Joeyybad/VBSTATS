@@ -53,6 +53,31 @@
         :error="confirmPasswordMeta.touched ? confirmPasswordError : ''"
         placeholder="******"
       />
+
+      <div class="mt-4">
+        <div class="flex items-start gap-3">
+          <input
+            id="acceptedCGU"
+            type="checkbox"
+            v-model="acceptedCGU"
+            class="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-800 text-yellow-500 focus:ring-yellow-500 focus:ring-offset-slate-900"
+          />
+          <label for="acceptedCGU" class="text-sm text-slate-400">
+            J'accepte les
+            <router-link to="/cgu" class="text-yellow-500 hover:underline"
+              >Conditions Générales d'Utilisation</router-link
+            >
+            et je consens au traitement de mes données personnelles conformément
+            au RGPD.
+          </label>
+        </div>
+        <p
+          v-if="acceptedCGUMeta.touched && acceptedCGUError"
+          class="mt-1 text-xs text-red-500"
+        >
+          {{ acceptedCGUError }}
+        </p>
+      </div>
     </template>
 
     <template #footer>
@@ -76,7 +101,6 @@ import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import api from "@/config";
 
-// Imports des composants
 import AuthLayout from "@/layouts/AuthLayout.vue";
 import AuthInput from "@/components/AuthInput.vue";
 import BaseNotification from "@/components/BaseNotification.vue";
@@ -84,7 +108,6 @@ import BaseNotification from "@/components/BaseNotification.vue";
 const router = useRouter();
 const loading = ref(false);
 
-// Système de notification
 const notification = ref({
   show: false,
   title: "",
@@ -99,7 +122,7 @@ const triggerNotify = (title, message, type = "success") => {
   }, 4000);
 };
 
-// 1. Schéma de validation Yup
+// 1. Schéma de validation mis à jour
 const schema = yup.object({
   firstname: yup.string().trim().required("Le prénom est requis"),
   lastname: yup.string().trim().required("Le nom est requis"),
@@ -118,9 +141,12 @@ const schema = yup.object({
     .trim()
     .oneOf([yup.ref("password")], "Les mots de passe ne correspondent pas")
     .required("Veuillez confirmer le mot de passe"),
+  // Validation Checkbox CGU
+  acceptedCGU: yup
+    .boolean()
+    .oneOf([true], "Vous devez accepter les conditions pour continuer"),
 });
 
-// 2. Initialisation de Vee-Validate
 const { handleSubmit } = useForm({ validationSchema: schema });
 
 const {
@@ -148,8 +174,13 @@ const {
   errorMessage: confirmPasswordError,
   meta: confirmPasswordMeta,
 } = useField("confirmPassword");
+const {
+  value: acceptedCGU,
+  errorMessage: acceptedCGUError,
+  meta: acceptedCGUMeta,
+} = useField("acceptedCGU");
 
-// 3. Logique de soumission
+// 3. Logique de soumission mise à jour
 const onSubmit = async (values) => {
   loading.value = true;
   try {
@@ -159,20 +190,24 @@ const onSubmit = async (values) => {
       email: values.email,
       password: values.password,
       confirmPassword: values.confirmPassword,
+      acceptedCGU: values.acceptedCGU,
     });
 
+    // Mise à jour du message pour la confirmation par mail
     triggerNotify(
-      "Inscription réussie !",
-      "Votre compte a été créé. Vous allez être redirigé vers la connexion.",
+      "Vérifiez votre boîte mail !",
+      "Un lien de confirmation vous a été envoyé à " +
+        values.email +
+        ". Veuillez l'activer pour vous connecter.",
       "success",
     );
 
+    // On attend un peu plus longtemps pour que l'utilisateur lise le message
     setTimeout(() => {
       router.push("/connexion");
-    }, 2500);
+    }, 5000);
   } catch (error) {
-    const errorMsg =
-      error.response?.data || "Une erreur est survenue lors de l'inscription.";
+    const errorMsg = error.response?.data || "Une erreur est survenue.";
     triggerNotify("Échec de l'inscription", errorMsg, "error");
   } finally {
     loading.value = false;

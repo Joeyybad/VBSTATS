@@ -13,6 +13,8 @@ import Home from "/src/views/Home.vue";
 import Inscription from "/src/views/Inscription.vue";
 import Matchstats from "/src/views/MatchStats.vue";
 import Profil from "/src/views/Profil.vue";
+import ConfirmEmail from "/src/views/ConfirmEmail.vue";
+import CGU from "/src/views/CGU.vue";
 
 const routes = [
   // Pages "publiques" ou "plein écran" (sans Header/Navbar/Footer par défaut)
@@ -43,6 +45,8 @@ const routes = [
       { path: "editcompte", name: "EditCompte", component: EditCompte },
       { path: "clubcreate", name: "ClubCreate", component: ClubCreate },
       { path: "editclub", name: "EditClub", component: EditClub },
+      { path: "confirm-email", name: "ConfirmEmail", component: ConfirmEmail },
+      { path: "cgu", name: "CGU", component: CGU },
     ],
   },
 ];
