@@ -58,13 +58,18 @@ const router = useRouter();
             <div>
               <h3 class="text-xl font-bold text-white">Mon Club</h3>
               <p class="text-gray-400 text-sm">
-                Gérer l'effectif et les équipes
+                {{
+                  userStore.isAdmin
+                    ? "Gérer l'identité et l'effectif"
+                    : "Voir l'identité et l'effectif"
+                }}
               </p>
             </div>
           </div>
         </router-link>
 
         <router-link
+          v-if="userStore.isStaff"
           to="/match"
           class="group p-6 bg-slate-800/40 border border-white/5 rounded-3xl hover:border-yellow-500/50 hover:bg-slate-800/60 transition-all duration-300"
         >
@@ -84,6 +89,7 @@ const router = useRouter();
         </router-link>
 
         <router-link
+          v-if="userStore.isStaff"
           to="/historique"
           class="group p-6 bg-slate-800/40 border border-white/5 rounded-3xl hover:border-purple-500/50 hover:bg-slate-800/60 transition-all duration-300"
         >
@@ -119,52 +125,7 @@ const router = useRouter();
       </div>
     </div>
 
-    <div v-else class="text-center max-w-2xl mx-auto space-y-6">
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-        Élevez votre jeu avec <span class="text-yellow-500">VB Stats</span>
-      </h1>
-      <p class="text-lg text-gray-300 leading-relaxed">
-        L'outil ultime pour digitaliser vos prises de notes en temps réel.
-        Transformez vos matchs en
-        <span class="text-white font-semibold">statistiques concrètes</span>.
-      </p>
-
-      <div class="flex flex-col sm:flex-row gap-4 justify-center pt-8">
-        <router-link
-          to="/inscription"
-          class="px-8 py-3 bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-bold rounded-full shadow-lg transition-all"
-        >
-          Commencer gratuitement
-        </router-link>
-        <router-link
-          to="/connexion"
-          class="px-8 py-3 bg-transparent border-2 border-white text-white hover:bg-white hover:text-slate-900 font-bold rounded-full transition-all"
-        >
-          Se connecter
-        </router-link>
-      </div>
-
-      <div class="mt-20 grid grid-cols-1 sm:grid-cols-3 gap-8 w-full max-w-4xl">
-        <div
-          class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 text-center"
-        >
-          <div class="text-3xl mb-3">📊</div>
-          <p class="text-gray-300 text-sm font-semibold">Stats détaillées</p>
-        </div>
-        <div
-          class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 text-center"
-        >
-          <div class="text-3xl mb-3">⏱️</div>
-          <p class="text-gray-300 text-sm font-semibold">Live Tracking</p>
-        </div>
-        <div
-          class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 text-center"
-        >
-          <div class="text-3xl mb-3">🏐</div>
-          <p class="text-gray-300 text-sm font-semibold">Expertise Volley</p>
-        </div>
-      </div>
-    </div>
+    <div v-else class="text-center max-w-2xl mx-auto space-y-6"></div>
   </div>
 </template>
 <style scoped>

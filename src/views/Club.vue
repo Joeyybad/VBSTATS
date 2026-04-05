@@ -130,12 +130,67 @@
             >Club ID: #{{ club.id }}</span
           >
           <router-link
+            v-if="userStore.isAdmin"
             :to="{ name: 'EditClub' }"
             class="inline-flex items-center gap-2 px-5 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm font-bold rounded-xl transition-all"
           >
             <img src="/src/assets/edition.png" class="w-4 h-4 filter invert" />
             Editer
           </router-link>
+        </div>
+      </div>
+      <div
+        v-if="userStore.isAdmin"
+        class="bg-slate-800/40 border border-white/10 rounded-3xl backdrop-blur-sm shadow-xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700"
+      >
+        <div class="p-8 space-y-6">
+          <h3 class="text-xl font-bold text-white flex items-center gap-3">
+            <div class="p-2 bg-blue-500/10 rounded-lg text-blue-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <line x1="19" y1="8" x2="19" y2="14" />
+                <line x1="16" y1="11" x2="22" y2="11" />
+              </svg>
+            </div>
+            Gestion du Staff
+          </h3>
+
+          <p class="text-slate-400 text-sm italic">
+            Ajoutez un collaborateur pour vous aider à saisir les statistiques
+            du club.
+          </p>
+
+          <form
+            @submit.prevent="addModerator"
+            class="flex flex-col sm:flex-row gap-4 items-end bg-white/5 p-6 rounded-2xl border border-white/5"
+          >
+            <div class="flex-1 w-full">
+              <AuthInput
+                label="Email du futur modérateur"
+                v-model="modEmail"
+                placeholder="exemple@email.com"
+                type="email"
+              />
+            </div>
+            <button
+              type="submit"
+              :disabled="addingMod"
+              class="h-[52px] px-6 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-600/20 whitespace-nowrap"
+            >
+              {{ addingMod ? "Envoi..." : "Nommer Modo" }}
+            </button>
+          </form>
         </div>
       </div>
 
@@ -200,7 +255,7 @@
                 <option value="LIBERO">Libero</option>
               </select>
             </div>
-            <div class="sm:col-span-2 pt-2">
+            <div v-if="userStore.isStaff" class="sm:col-span-2 pt-2">
               <button
                 type="submit"
                 :disabled="savingPlayer"
@@ -249,6 +304,7 @@
                   </div>
                 </div>
                 <button
+                  v-if="userStore.isStaff"
                   @click="confirmDelete(player.id)"
                   class="p-2 text-slate-600 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
                 >
@@ -306,6 +362,7 @@
                 </div>
               </div>
               <button
+                v-if="userStore.isStaff"
                 @click="
                   $router.push({
                     name: 'Gamesheet',
@@ -398,6 +455,8 @@ const loading = ref(true);
 const club = ref(null);
 const players = ref([]);
 const savingPlayer = ref(false);
+const modEmail = ref("");
+const addingMod = ref(false);
 
 // ÉTATS MODALES & NOTIFS
 const showConfirmModal = ref(false);
@@ -430,6 +489,35 @@ const fetchPlayers = async (clubId) => {
     players.value = response.data;
   } catch (error) {
     console.error("Erreur joueurs:", error);
+  }
+};
+
+const addModerator = async () => {
+  if (!modEmail.value) {
+    triggerNotify("Champ requis", "Veuillez saisir un email.", "error");
+    return;
+  }
+  addingMod.value = true;
+  try {
+    // On appelle l'endpoint qu'on a imaginé (à créer côté Java)
+    // On passe l'ID du club et l'email en paramètre
+    await api.post(`/club/${club.value.id}/add-moderator`, {
+      email: modEmail.value,
+    });
+
+    triggerNotify(
+      "Succès",
+      `L'utilisateur ${modEmail.value} est désormais modérateur !`,
+      "success",
+    );
+    modEmail.value = ""; // On vide le champ
+  } catch (error) {
+    const message =
+      error.response?.data?.message ||
+      "Utilisateur introuvable ou déjà lié au club.";
+    triggerNotify("Erreur", message, "error");
+  } finally {
+    addingMod.value = false;
   }
 };
 

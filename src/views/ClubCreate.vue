@@ -337,12 +337,12 @@ const onFormSubmit = handleSubmit(async (values) => {
     }
 
     await api.post("/club/create", formData);
-
     triggerNotify(
       "Club créé",
       "Votre club a été enregistré avec succès !",
       "success",
     );
+    userStore.user.isAdmin = true;
 
     setTimeout(() => {
       router.push({ name: "Club" });
